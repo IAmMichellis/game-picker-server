@@ -32,5 +32,3 @@ Link.objects.create(url='https://twitter.com/jonatasbaldin/', description='The J
 ```
 
 
-
-```
