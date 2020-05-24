@@ -14,3 +14,22 @@ class Query(graphene.ObjectType):
 
     def resolve_games(self, info, **kwargs):
         return Game.objects.all()
+
+class CreateGame(graphene.Mutation):
+    id = graphene.Int()
+    title = graphene.String()
+
+    class Arguments:
+        title = graphene.String()
+
+    def mutate(self, info, title):
+        game = Game(title=title)
+        game.save()
+
+        return CreateGame(
+            id=game.id,
+            title=game.title,
+        )
+
+class Mutation(graphene.ObjectType):
+    create_game = CreateGame.Field()
