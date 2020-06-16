@@ -13,16 +13,29 @@ class GameType(DjangoObjectType):
 
 
 class Query(graphene.ObjectType):
-    games = graphene.List(GameType, search=graphene.String())
+    games = graphene.List(
+        GameType,
+        search=graphene.String(),
+        first=graphene.Int(),
+        skip=graphene.Int(), 
+        )
 
-    def resolve_games(self, info, search=None, **kwargs):
+    def resolve_games(self, info, search=None, first=None, skip=None, **kwargs):
+        games = Game.objects.all()
+
         if search:
             filter = (
                 Q(title__icontains=search)
             )
-            return Game.objects.filter(filter)
+            games = games.filter(filter)
 
-        return Game.objects.all()
+        if skip:
+            games = games[skip:]
+
+        if first:
+            games = games[:first]
+
+        return games
 
 class CreateGame(graphene.Mutation):
     id = graphene.Int()
